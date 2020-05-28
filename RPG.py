@@ -102,9 +102,67 @@ for row in level:
     y += 16
     x = 0
 
+#Animate Right, Left, Up, Down
+def chooseDir():
+    if key[pygame.K_a]:
+        up = False
+        down = False
+        left = True
+        right = False
+        print("Moving left: " + str(left))
+    elif key[pygame.K_d]:
+        up = False
+        down = False
+        left = False
+        right = True
+        print("Moving right: " + str(right))
+    elif key[pygame.K_w]:
+        up = True
+        down = False
+        left = False
+        right = False
+        print("Moving up: " + str(up))
+    elif key[pygame.K_s]:
+        up = False
+        down = True
+        left = False
+        right = False
+        print("Moving down: " + str(down))
+    else:
+        up = False
+        down = False
+        left = False
+        right = False
+        print("Please Stand By")
+
+
 #Animations
 def redrawGameWindow():
+    
+    global walkcount
 
+    if walkcount + 1 >= 16:
+        walkcount = 0
+    #Walking Animation
+
+    if left:
+        win.blit(walkLeft[walkcount//4], (x,y))
+        walkcount += 1
+    elif right:
+        win.blit(walkRight[walkcount//4], (x,y))
+        walkcount += 1
+    elif up:
+        win.blit(walkUp[walkcount//4], (x,y))
+        walkcount += 1
+    elif down:
+        win.blit(walkDown[walkcount//4], (x,y))
+        walkcount += 1
+    else:
+        win.blit(char, (x,y))
+        walkcount = 0
+
+    # Stamina UI Animation   
+    
     if stamina >= 80:
         win.blit(sbar[0], (25,10))
         
@@ -134,8 +192,8 @@ def redrawGameWindow():
 run = True
 while run:
 
-    print(stamina)
-    print(cant_run)
+    #print(stamina)
+    #print(cant_run)
     clock.tick(60)
     if stamina >= 80:
         cant_run = False
@@ -152,21 +210,26 @@ while run:
         player.move(-3.5, 0)
         stamina -= .5
         running = True
+        chooseDir()
     elif key[pygame.K_d] and key[pygame.K_LSHIFT] and stamina >= 1 and cant_run == False:#run right
         player.move(3.5, 0)
         stamina -= .5
         running = True
+        chooseDir()
     elif key[pygame.K_w] and key[pygame.K_LSHIFT] and stamina >= 1 and cant_run == False:#run up
         player.move(0, -3.5)
         stamina -= .5
         running = True
+        chooseDir()
     elif key[pygame.K_s] and key[pygame.K_LSHIFT] and stamina >= 1 and cant_run == False:#run down
         player.move(0, 1.5)
         stamina -= .5
         running = True
+        chooseDir()
     elif key[pygame.K_a]:#walk left 
         player.move(-2, 0)
         running = False
+        chooseDir()
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
@@ -176,6 +239,7 @@ while run:
     elif key[pygame.K_d]:#walk right
         player.move(2, 0)
         running = False
+        chooseDir()
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
@@ -185,6 +249,7 @@ while run:
     elif key[pygame.K_w]:#walk up
         player.move(0, -2)
         running = False
+        chooseDir()
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
@@ -194,6 +259,7 @@ while run:
     elif key[pygame.K_s]:#walk down
         player.move(0, 2)
         running = False
+        chooseDir()
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
@@ -203,6 +269,7 @@ while run:
     else:
         if stamina < 80:
             stamina += 1
+        chooseDir()
     
     # Draw the scene
     #win.fill((0, 0, 0))
@@ -214,3 +281,4 @@ while run:
     pygame.display.flip()
 
 pygame.quit()   
+
