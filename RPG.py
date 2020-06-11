@@ -1,6 +1,7 @@
 import os
 import random
 import pygame
+import sys
 # Variables
 test = pygame.Rect(300,100,50,50)
 x = 50
@@ -29,7 +30,6 @@ black = (255, 255, 255)
 clock = pygame.time.Clock()
 
 #Initialize a Window
-win = pygame.display.set_mode((window_height,window_width))
 pygame.display.set_caption("Survivle RPG")
 walkRight = [pygame.image.load('sprites/R1.png'), pygame.image.load('sprites/R2.png'), pygame.image.load('sprites/R3.png'), pygame.image.load('sprites/R4.png')]
 walkLeft = [pygame.image.load('sprites/L1.png'), pygame.image.load('sprites/L2.png'), pygame.image.load('sprites/L3.png'), pygame.image.load('sprites/L4.png')]
@@ -41,10 +41,17 @@ sbar = [pygame.image.load('sprites/stamina1.png'), pygame.image.load('sprites/st
 hbar = [pygame.image.load('sprites/health1.png'), pygame.image.load('sprites/health2.png'), pygame.image.load('sprites/health3.png'), pygame.image.load('sprites/health4.png'), pygame.image.load('sprites/health5.png'), pygame.image.load('sprites/health6.png'), pygame.image.load('sprites/health7.png'), pygame.image.load('sprites/health8.png')]
 
 # Class for the orange dude
-class Player(object):
+class Player(pygame.sprite.Sprite):
     
     def __init__(self):
-        self.rect = pygame.Rect(32, 32, 16, 16)
+        #self.rect = pygame.Rect(50, 50, 16, 16)
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("sprites/D1.png")
+        #img = [os.path.join('sprites', 'D1.png')].convert()
+        #self.images.append(img)
+        #self.image = self.images[0]
+        self.rect = self.image.get_rect()
+        
 
     def move(self, dx, dy):
         
@@ -80,15 +87,30 @@ class Wall(object):
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
 
 # Initialise pygame
+pygame.display.init()
 os.environ["SDL_VIDEO_CENTERED"] = "1"
 pygame.init()
 
+win = pygame.display.set_mode((window_height,window_width))
+backdrop = pygame.image.load(os.path.join('sprites','bg.png')).convert()
+backdropbox = win.get_rect()
+
 walls = [] # List to hold the walls
 player = Player() # Create the player
+player.rect.x = 0
+player.rect.y = 0
+player_list = pygame.sprite.Group()
+player_list.add(player)
 level = [
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"W                            W",
+"              WWWWWWWWWWWWWWWW",
+"                             W",
 "W         WWWWWW             W",
+"W   WWWW       W             W",
+"W   WWWW       W             W",
+"W   WWWW       W             W",
+"W   WWWW       W             W",
+"W   WWWW       W             W",
+"W   WWWW       W             W",
 "W   WWWW       W             W",
 ]
 
@@ -272,13 +294,12 @@ while run:
         chooseDir()
     
     # Draw the scene
-    #win.fill((0, 0, 0))
-    win.blit(bg,(0,0))
+    player_list.draw(win) #draw the player
     for wall in walls:
         pygame.draw.rect(win, black , wall.rect)
-    pygame.draw.rect(win,green, player.rect)
     redrawGameWindow()
     pygame.display.flip()
+    win.blit(backdrop, backdropbox)
+    
 
 pygame.quit()   
-
