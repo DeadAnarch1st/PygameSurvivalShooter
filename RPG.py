@@ -3,7 +3,6 @@ import random
 import pygame
 import sys
 # Variables
-test = pygame.Rect(300,100,50,50)
 x = 50
 y = 400
 window_height = 500
@@ -39,6 +38,7 @@ bg = pygame.image.load('sprites/bg.png')
 char = pygame.image.load('sprites/D1.png')
 sbar = [pygame.image.load('sprites/stamina1.png'), pygame.image.load('sprites/stamina2.png'), pygame.image.load('sprites/stamina3.png'), pygame.image.load('sprites/stamina4.png'), pygame.image.load('sprites/stamina5.png'), pygame.image.load('sprites/stamina6.png'), pygame.image.load('sprites/stamina7.png'), pygame.image.load('sprites/stamina8.png')]
 hbar = [pygame.image.load('sprites/health1.png'), pygame.image.load('sprites/health2.png'), pygame.image.load('sprites/health3.png'), pygame.image.load('sprites/health4.png'), pygame.image.load('sprites/health5.png'), pygame.image.load('sprites/health6.png'), pygame.image.load('sprites/health7.png'), pygame.image.load('sprites/health8.png')]
+animRight = ['sprites/R1.png', 'sprite/R2.png', 'sprites/R3.png', 'sprites/R4.png']
 
 # Class for the orange dude
 class Player(pygame.sprite.Sprite):
@@ -51,8 +51,11 @@ class Player(pygame.sprite.Sprite):
         #self.images.append(img)
         #self.image = self.images[0]
         self.rect = self.image.get_rect()
+        self.right = [pygame.image.load('sprites/R1.png'), pygame.image.load('sprites/R2.png'), pygame.image.load('sprites/R3.png'), pygame.image.load('sprites/R4.png')]
+        self.left = [pygame.image.load('sprites/L1.png'), pygame.image.load('sprites/L2.png'), pygame.image.load('sprites/L3.png'), pygame.image.load('sprites/L4.png')]
+        self.up = [pygame.image.load('sprites/U1.png'), pygame.image.load('sprites/U2.png'), pygame.image.load('sprites/U3.png'), pygame.image.load('sprites/U4.png')]
+        self.down = [pygame.image.load('sprites/D1.png'), pygame.image.load('sprites/D2.png'), pygame.image.load('sprites/D3.png'), pygame.image.load('sprites/D4.png')]
         
-
     def move(self, dx, dy):
         
         # Move each axis separately. Note that this checks for collisions both times.
@@ -124,40 +127,6 @@ for row in level:
     y += 16
     x = 0
 
-#Animate Right, Left, Up, Down
-def chooseDir():
-    if key[pygame.K_a]:
-        up = False
-        down = False
-        left = True
-        right = False
-        print("Moving left: " + str(left))
-    elif key[pygame.K_d]:
-        up = False
-        down = False
-        left = False
-        right = True
-        print("Moving right: " + str(right))
-    elif key[pygame.K_w]:
-        up = True
-        down = False
-        left = False
-        right = False
-        print("Moving up: " + str(up))
-    elif key[pygame.K_s]:
-        up = False
-        down = True
-        left = False
-        right = False
-        print("Moving down: " + str(down))
-    else:
-        up = False
-        down = False
-        left = False
-        right = False
-        print("Please Stand By")
-
-
 #Animations
 def redrawGameWindow():
     
@@ -210,7 +179,6 @@ def redrawGameWindow():
 
     pygame.display.update()
     
-
 run = True
 while run:
 
@@ -232,26 +200,25 @@ while run:
         player.move(-3.5, 0)
         stamina -= .5
         running = True
-        chooseDir()
     elif key[pygame.K_d] and key[pygame.K_LSHIFT] and stamina >= 1 and cant_run == False:#run right
         player.move(3.5, 0)
         stamina -= .5
         running = True
-        chooseDir()
     elif key[pygame.K_w] and key[pygame.K_LSHIFT] and stamina >= 1 and cant_run == False:#run up
         player.move(0, -3.5)
         stamina -= .5
         running = True
-        chooseDir()
     elif key[pygame.K_s] and key[pygame.K_LSHIFT] and stamina >= 1 and cant_run == False:#run down
-        player.move(0, 1.5)
+        player.move(0, 3.5)
         stamina -= .5
         running = True
-        chooseDir()
     elif key[pygame.K_a]:#walk left 
         player.move(-2, 0)
         running = False
-        chooseDir()
+        left = True
+        right = False
+        up = False
+        down = False
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
@@ -261,7 +228,10 @@ while run:
     elif key[pygame.K_d]:#walk right
         player.move(2, 0)
         running = False
-        chooseDir()
+        left = False
+        right = True
+        up = False
+        down = False
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
@@ -271,7 +241,10 @@ while run:
     elif key[pygame.K_w]:#walk up
         player.move(0, -2)
         running = False
-        chooseDir()
+        left = False
+        right = False
+        up = True
+        down = False
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
@@ -281,7 +254,10 @@ while run:
     elif key[pygame.K_s]:#walk down
         player.move(0, 2)
         running = False
-        chooseDir()
+        left = False
+        right = False
+        up = False
+        down = True
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
@@ -291,7 +267,6 @@ while run:
     else:
         if stamina < 80:
             stamina += 1
-        chooseDir()
     
     # Draw the scene
     player_list.draw(win) #draw the player
