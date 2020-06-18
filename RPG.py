@@ -7,55 +7,30 @@ x = 50
 y = 400
 window_height = 500
 window_width = 480
-wall_size = 50
-width = 92
-height = 92
-vel = 5
-boost = 1.5
-up = False
-down = False
-left = False
-right = False
-shift = False
 running = False
 cant_run = False
-walkcount = 0
 stamina = 80
-health = 100
 red = (255,0,0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
 black = (255, 255, 255)
 clock = pygame.time.Clock()
 
-#Initialize a Window
+# Sprites
 pygame.display.set_caption("Survivle RPG")
-walkRight = [pygame.image.load('sprites/R1.png'), pygame.image.load('sprites/R2.png'), pygame.image.load('sprites/R3.png'), pygame.image.load('sprites/R4.png')]
-walkLeft = [pygame.image.load('sprites/L1.png'), pygame.image.load('sprites/L2.png'), pygame.image.load('sprites/L3.png'), pygame.image.load('sprites/L4.png')]
-walkUp = [pygame.image.load('sprites/U1.png'), pygame.image.load('sprites/U2.png'), pygame.image.load('sprites/U3.png'), pygame.image.load('sprites/U4.png')]
-walkDown = [pygame.image.load('sprites/D1.png'), pygame.image.load('sprites/D2.png'), pygame.image.load('sprites/D3.png'), pygame.image.load('sprites/D4.png')]
-bg = pygame.image.load('sprites/bg.png')
 char = pygame.image.load('sprites/D1.png')
 sbar = [pygame.image.load('sprites/stamina1.png'), pygame.image.load('sprites/stamina2.png'), pygame.image.load('sprites/stamina3.png'), pygame.image.load('sprites/stamina4.png'), pygame.image.load('sprites/stamina5.png'), pygame.image.load('sprites/stamina6.png'), pygame.image.load('sprites/stamina7.png'), pygame.image.load('sprites/stamina8.png')]
 hbar = [pygame.image.load('sprites/health1.png'), pygame.image.load('sprites/health2.png'), pygame.image.load('sprites/health3.png'), pygame.image.load('sprites/health4.png'), pygame.image.load('sprites/health5.png'), pygame.image.load('sprites/health6.png'), pygame.image.load('sprites/health7.png'), pygame.image.load('sprites/health8.png')]
 animRight = ['sprites/R1.png', 'sprite/R2.png', 'sprites/R3.png', 'sprites/R4.png']
 
-# Class for the orange dude
+# Player Main Class
 class Player(pygame.sprite.Sprite):
     
     def __init__(self):
-        #self.rect = pygame.Rect(50, 50, 16, 16)
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("sprites/D1.png")
-        #img = [os.path.join('sprites', 'D1.png')].convert()
-        #self.images.append(img)
-        #self.image = self.images[0]
         self.rect = self.image.get_rect()
-        self.right = [pygame.image.load('sprites/R1.png'), pygame.image.load('sprites/R2.png'), pygame.image.load('sprites/R3.png'), pygame.image.load('sprites/R4.png')]
-        self.left = [pygame.image.load('sprites/L1.png'), pygame.image.load('sprites/L2.png'), pygame.image.load('sprites/L3.png'), pygame.image.load('sprites/L4.png')]
-        self.up = [pygame.image.load('sprites/U1.png'), pygame.image.load('sprites/U2.png'), pygame.image.load('sprites/U3.png'), pygame.image.load('sprites/U4.png')]
-        self.down = [pygame.image.load('sprites/D1.png'), pygame.image.load('sprites/D2.png'), pygame.image.load('sprites/D3.png'), pygame.image.load('sprites/D4.png')]
-        
+                
     def move(self, dx, dy):
         
         # Move each axis separately. Note that this checks for collisions both times.
@@ -94,6 +69,7 @@ pygame.display.init()
 os.environ["SDL_VIDEO_CENTERED"] = "1"
 pygame.init()
 
+#Initialize window and background
 win = pygame.display.set_mode((window_height,window_width))
 backdrop = pygame.image.load(os.path.join('sprites','bg.png')).convert()
 backdropbox = win.get_rect()
@@ -129,28 +105,6 @@ for row in level:
 
 #Animations
 def redrawGameWindow():
-    
-    global walkcount
-
-    if walkcount + 1 >= 16:
-        walkcount = 0
-    #Walking Animation
-
-    if left:
-        win.blit(walkLeft[walkcount//4], (x,y))
-        walkcount += 1
-    elif right:
-        win.blit(walkRight[walkcount//4], (x,y))
-        walkcount += 1
-    elif up:
-        win.blit(walkUp[walkcount//4], (x,y))
-        walkcount += 1
-    elif down:
-        win.blit(walkDown[walkcount//4], (x,y))
-        walkcount += 1
-    else:
-        win.blit(char, (x,y))
-        walkcount = 0
 
     # Stamina UI Animation   
     
@@ -182,8 +136,6 @@ def redrawGameWindow():
 run = True
 while run:
 
-    #print(stamina)
-    #print(cant_run)
     clock.tick(60)
     if stamina >= 80:
         cant_run = False
@@ -215,10 +167,6 @@ while run:
     elif key[pygame.K_a]:#walk left 
         player.move(-2, 0)
         running = False
-        left = True
-        right = False
-        up = False
-        down = False
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
@@ -228,10 +176,6 @@ while run:
     elif key[pygame.K_d]:#walk right
         player.move(2, 0)
         running = False
-        left = False
-        right = True
-        up = False
-        down = False
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
@@ -241,10 +185,6 @@ while run:
     elif key[pygame.K_w]:#walk up
         player.move(0, -2)
         running = False
-        left = False
-        right = False
-        up = True
-        down = False
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
@@ -253,11 +193,6 @@ while run:
                 cant_run = False
     elif key[pygame.K_s]:#walk down
         player.move(0, 2)
-        running = False
-        left = False
-        right = False
-        up = False
-        down = True
         if stamina < 80 and running == False:
             stamina += .2
             if stamina <= 40:
